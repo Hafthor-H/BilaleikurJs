@@ -11,6 +11,15 @@ var gamePoints = 0; // stiga teljari
 var gameTime = 0; // tekur tima a leik
 var interval = 200; // timi milli hindrana
 
+var row1A = true;
+var row1B = true;
+var row2A = true;
+var row2B = true;
+var row3A = true;
+var row3B = true;
+var row4A = true;
+var row4B = true;
+
 var currentObstacle = []; // fylki fyrir hindranir sem eru i notkun
 var vegaLinuGeymsla = []; // 
 
@@ -69,31 +78,41 @@ var grassObstacles = [treeImg1, treeImg2, treeImg3, treeImg4, rockImg1, rockImg2
 // --- Velur hvaða rás hindun kemur ---
 function pickRow() {
     rowPickerinn = Math.floor((Math.random() * 8) + 1)
-    if (rowPickerinn == 1) {
+    if (rowPickerinn == 1 && (row1A)) {
         drawRow1A()
+        row1A = false;
     }
-    if (rowPickerinn == 2) {
+    if (rowPickerinn == 2 && (row1B)) {
         drawRow1B()
+        row1B = false;
     }
-    if (rowPickerinn == 3) {
+    if (rowPickerinn == 3 && (row2A)) {
         drawRow2A()
+        row2A = false;
     }
-    if (rowPickerinn == 4) {
+    if (rowPickerinn == 4 && (row2B)) {
         drawRow2B()
+        row2B = false;
     }
-    if (rowPickerinn == 5) {
+    if (rowPickerinn == 5 && (row3A)) {
         drawRow3A()
+        row3A = false;
     }
-    if (rowPickerinn == 6) {
+    if (rowPickerinn == 6 && (row3B)) {
         drawRow3B()
+        row3B = false;
     }
-    if (rowPickerinn == 7) {
+    if (rowPickerinn == 7 && (row4A)) {
         drawRow4A()
+        row4A = false;
     }
-    if (rowPickerinn == 8) {
+    if (rowPickerinn == 8 && (row4B)) {
         drawRow4B()
+        row4B = false;
     }
 }
+
+
 
 // --- Sækir random mynd sem er a grasinu ---
 function getGrassImg() {
@@ -110,42 +129,42 @@ function getRoadImg() {
 // --- Föll fyrir teiknun hindrana á hverri rás ---
 function drawRow1A() {
     let img1 = getGrassImg()
-    tester1 = new obstacleTester(img1, 85, yObstacle, 20, 20)
+    tester1 = new obstacleTester(img1, 94, yObstacle, 20, 20)
     currentObstacle.push(tester1)
 }
 function drawRow1B() {
     let img2 = getGrassImg()
-    tester2 = new obstacleTester(img2, 170, yObstacle, 20, 20)
+    tester2 = new obstacleTester(img2, 188, yObstacle, 20, 20)
     currentObstacle.push(tester2)
 }
 function drawRow2A() {
     let img3 = getRoadImg()
-    tester3 = new obstacleTester(img3, 255, yObstacle, 20, 20)
+    tester3 = new obstacleTester(img3, 282, yObstacle, 20, 20)
     currentObstacle.push(tester3)
 }
 function drawRow2B() {
     let img4 = getRoadImg()
-    tester4 = new obstacleTester(img4, 340, yObstacle, 20, 20)
+    tester4 = new obstacleTester(img4, 376, yObstacle, 20, 20)
     currentObstacle.push(tester4)
 }
 function drawRow3A() {
     let img5 = getRoadImg()
-    tester5 = new obstacleTester(img5, 375, yObstacle, 20, 20)
+    tester5 = new obstacleTester(img5, 470, yObstacle, 20, 20)
     currentObstacle.push(tester5)
 }
 function drawRow3B() {
-    let img6 = getRoadImg()
-    tester6 = new obstacleTester(img6, 425, yObstacle, 20, 20)
+    let img6 = getGrassImg()
+    tester6 = new obstacleTester(img6, 564, yObstacle, 20, 20)
     currentObstacle.push(tester6)
 }
 function drawRow4A() {
     let img7 = getGrassImg()
-    tester7 = new obstacleTester(img7, 510, yObstacle, 20, 20)
+    tester7 = new obstacleTester(img7, 658, yObstacle, 20, 20)
     currentObstacle.push(tester7)
 }
 function drawRow4B() {
     let img8 = getGrassImg()
-    tester8 = new obstacleTester(img8, 595, yObstacle, 20, 20)
+    tester8 = new obstacleTester(img8, 752, yObstacle, 20, 20)
     currentObstacle.push(tester8)
 }
 
@@ -198,13 +217,12 @@ function draw() {
     ctx.beginPath();
     ctx.fillStyle = "#40b84e";
     ctx.fillRect(0, 0, 800, 800);
-    ctx.fillRect(0, 0, 800, 800);
     ctx.closePath();
 
     // --- vegur ---
     ctx.beginPath();
     ctx.fillStyle = "black";
-    ctx.fillRect(275, 0, 250, 800);
+    ctx.fillRect(270, 0, 260, 800);
     ctx.closePath();
 
     // --- veg linur ---
@@ -221,6 +239,7 @@ function draw() {
         currentObstacle[j].drawTester()
         if (currentObstacle[j].y > canvas.height - 100) {
             currentObstacle = [];
+            resetFlag()
             generateObstacles()
         }
     }
@@ -298,6 +317,7 @@ function startGame() {
 function playAgain() {
     currentObstacle = []
     dy = 5;
+    resetFlag()
     generateObstacles();
     gamePoints = 0;
     closeGameOver();
@@ -312,13 +332,13 @@ function stopGame() {
 
 // Hindranir
 function generateObstacles() {
-    for (let i = 0; i < 5; i++) {
+    for (let i = 0; i < 10; i++) {
         dy += 0.05;
         gamePoints += 1;
         pickRow()
     }
 }
-for (let i = 0; i < 5; i++) {
+for (let i = 0; i < 10; i++) {
     pickRow()
 }
 
@@ -338,6 +358,17 @@ function openGameOver() {
 
 function closeGameOver() {
     document.getElementById("gameOver-form").style.display = "none";
+}
+
+function resetFlag() {
+    row1A = true;
+    row1b = true;
+    row2A = true;
+    row2B = true;
+    row3A = true;
+    row3B = true;
+    row4A = true;
+    row4B = true;
 }
 
 
