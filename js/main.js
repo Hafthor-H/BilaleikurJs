@@ -129,42 +129,42 @@ function getRoadImg() {
 // --- Föll fyrir teiknun hindrana á hverri rás ---
 function drawRow1A() {
     let img1 = getGrassImg()
-    tester1 = new obstacleTester(img1, 94, yObstacle, 20, 20)
+    tester1 = new obstacleTester(img1, 67.5, yObstacle, 20, 20)
     currentObstacle.push(tester1)
 }
 function drawRow1B() {
     let img2 = getGrassImg()
-    tester2 = new obstacleTester(img2, 188, yObstacle, 20, 20)
+    tester2 = new obstacleTester(img2, 202, 5, yObstacle, 20, 20)
     currentObstacle.push(tester2)
 }
 function drawRow2A() {
     let img3 = getRoadImg()
-    tester3 = new obstacleTester(img3, 282, yObstacle, 20, 20)
+    tester3 = new obstacleTester(img3, 302.5, yObstacle, 20, 20)
     currentObstacle.push(tester3)
 }
 function drawRow2B() {
     let img4 = getRoadImg()
-    tester4 = new obstacleTester(img4, 376, yObstacle, 20, 20)
+    tester4 = new obstacleTester(img4, 367.5, yObstacle, 20, 20)
     currentObstacle.push(tester4)
 }
 function drawRow3A() {
     let img5 = getRoadImg()
-    tester5 = new obstacleTester(img5, 470, yObstacle, 20, 20)
+    tester5 = new obstacleTester(img5, 432.5, yObstacle, 20, 20)
     currentObstacle.push(tester5)
 }
 function drawRow3B() {
     let img6 = getGrassImg()
-    tester6 = new obstacleTester(img6, 564, yObstacle, 20, 20)
+    tester6 = new obstacleTester(img6, 497.5, yObstacle, 20, 20)
     currentObstacle.push(tester6)
 }
 function drawRow4A() {
     let img7 = getGrassImg()
-    tester7 = new obstacleTester(img7, 658, yObstacle, 20, 20)
+    tester7 = new obstacleTester(img7, 597.5, yObstacle, 20, 20)
     currentObstacle.push(tester7)
 }
 function drawRow4B() {
     let img8 = getGrassImg()
-    tester8 = new obstacleTester(img8, 752, yObstacle, 20, 20)
+    tester8 = new obstacleTester(img8, 732.5, yObstacle, 20, 20)
     currentObstacle.push(tester8)
 }
 
