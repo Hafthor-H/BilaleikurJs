@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <title>Move Square</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/menu.css">
+</head>
+
+<body>
+    <!-- Menu -->
+    <button class="open-menu" onclick="openMenu()">Menu</button>
+
+    <!-- Form -->
+    <div class="gameOver-popup" id="gameOver-form">
+        <form class="form-container">
+            <h1>Game Over!</h1>
+            <h2>High score: 200!</h2>
+            <button type="button" class="playAgain" onclick="playAgain()">Play again</button>
+            <!-- <button type="button" class="btn cancel" onclick="closeForm()">Close</button> -->
+        </form>
+    </div>
+
+    <div class="menu-popup" id="menu-form">
+        <form class="form-container">
+            <h1>High Score: 200!</h1>
+
+            <button type="button" class="play" onclick="startGame()">Play</button>
+            <!-- <button type="button" class="btn cancel" onclick="closeForm()">Close</button> -->
+        </form>
+    </div>
+
+    <div class="center" id="menu">
+        <button id="start">Start</button>
+        <button id="stop">Stop</button>
+    </div>
+    </div>
+    <div id="centre">
+        <canvas id="gameBoard" height="800px" width="800px"></canvas>
+        <script src="./js/main.js"></script>
+</body>
+
+</html>
