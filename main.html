@@ -3,7 +3,8 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Move Square</title>
+    <title>Bilageddon</title>
+    <link rel='icon' href='assets/favicon.ico' type='image/x-icon' />
     <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="css/menu.css">
 </head>
@@ -15,7 +16,6 @@
     <div class="gameOver-popup" id="gameOver-form">
         <form class="form-container">
             <h1>Game Over!</h1>
-            <h2>High score: 200!</h2>
             <button type="button" class="playAgain" onclick="playAgain()">Play again</button>
             <!-- <button type="button" class="btn cancel" onclick="closeForm()">Close</button> -->
         </form>
@@ -23,9 +23,8 @@
 
     <div class="menu-popup" id="menu-form">
         <form class="form-container">
-            <h1>High Score: 200!</h1>
-
-            <button type="button" class="play" onclick="startGame()">Play</button>
+            <h1>Bílageddon!</h1>
+            <button type="button" class="play" onclick="startGame()">Spila</button>
             <!-- <button type="button" class="btn cancel" onclick="closeForm()">Close</button> -->
         </form>
     </div>
@@ -36,8 +35,10 @@
     </div>
     </div>
     <div id="centre">
-        <canvas id="gameBoard" height="800px" width="800px"></canvas>
+        <canvas id="gameBoard" height="800" width="840"></canvas>
         <script src="js/main.js"></script>
+
+
 </body>
 
 </html>

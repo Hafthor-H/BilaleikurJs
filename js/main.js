@@ -3,13 +3,23 @@ var ctx = canvas.getContext("2d");
 
 var running = false; // til ad stoppa og starta game state
 var dx = 5;
-var dy = 5;
-var yObstacle = 40; // start y hnit a hindrunum
-var yVegLina = 20; // start y hnit a veglinum
-var xVegLina = 294; // x hnit midjusettar veglinur
+var dy = 8;
+var yObstacle = - 200; // start y hnit a hindrunum
 var gamePoints = 0; // stiga teljari
-var gameTime = 0; // tekur tima a leik
-var interval = 200; // timi milli hindrana
+//var gameTime = 0; // tekur tima a leik
+//var interval = 200; // timi milli hindrana
+
+// --- Veg linur ---
+// Vinstri veglinur
+var xLineLeft = 296; // Vinstri x hnit midjusettar veglinur
+var wLineLeft = 8;
+var hLineLeft = 30;
+// Hægri veglinur
+var xLineRight = 532; // Hægri x hnit midjusettar veglinur
+var wLineRight = 8;
+var hLineRight = 30;
+// Badar linur
+var yVegLina = 20; // start y hnit a veglinum
 
 var row1A = true;
 var row1B = true;
@@ -20,8 +30,11 @@ var row3B = true;
 var row4A = true;
 var row4B = true;
 
+var flag = true;
+
 var currentObstacle = []; // fylki fyrir hindranir sem eru i notkun
-var vegaLinuGeymsla = []; // 
+var roadLineLeftStorage = []; //
+var roadLineRightStorage = [];
 
 // --- player ---
 const playerImg = new Image();
@@ -36,44 +49,83 @@ playerImg.src = 'assets/player/playerMain.png'
 // playerRight.src = '/assets/player/playerTurnR.png'
 
 let player = {
-    x: 280,
+    x: 400,
     y: 680,
-    width: 60,
-    height: 80
+    width: 70,
+    height: 117
 }
 
-// --- tree obstacles ---
+// --- Teikna leikmann ---
+/* function drawPlayer() {
+    ctx.drawImage(playerImg, player.x, player.y, player.width, player.height);
+} */
+
+// --- Grass Obstacles ---
 const treeImg1 = new Image();
 treeImg1.src = 'assets/world/tree1.png' // Komið
-
 const treeImg2 = new Image();
 treeImg2.src = 'assets/world/tree2.png' // Komið
-
 const treeImg3 = new Image();
 treeImg3.src = 'assets/world/tree3.png' // Komið
-
-const treeImg4 = new Image();
-treeImg4.src = 'assets/world/tree4.png' // Komið
-
-// --- rock obstacles ---
 const rockImg1 = new Image();
-rockImg1.src = 'assets/world/rock1.png' // komið
-
+/* rockImg1.src = 'assets/world/rock1.png' // komið
 const rockImg2 = new Image();
-rockImg2.src = 'assets/world/rock3.png' // komið
+rockImg2.src = 'assets/world/rock2.png' // komið
+const rockImg3 = new Image();
+rockImg3.src = 'assets/world/rock3.png' // komið */
 
-// --- car obstacles ---
-const taxiImg1 = new Image(); // Taxi
-taxiImg1.src = 'assets/cars/taxi/taxiSideA.png' // Komið
 
-const minivanImg1 = new Image(); // Minivan
-minivanImg1.src = 'assets/cars/minivan/minivanSideA.png' // Komið
+// --- Road Obstacles ---
+// Vinstri
+const taxiLeftImg = new Image(); // Taxi abandoned down
+taxiLeftImg.src = 'assets/carWreck/taxi/taxiDown.png'
+const sedanLeftImg = new Image(); // Sedan abandoned down
+sedanLeftImg.src = 'assets/carWreck/sedan/sedanDown.png'
+const policeLeftImg = new Image(); // Police abandoned down
+policeLeftImg.src = 'assets/carWreck/police/policeDown.png'
+const wagonLeftImg = new Image(); // Wagon abandoned down
+wagonLeftImg.src = 'assets/carWreck/wagon/wagonDown.png'
+const wagonBurnLeftImg = new Image(); // Wagon Burned down
+wagonBurnLeftImg.src = 'assets/carBurn/wagonBurn/wagonBurnDown.png'
+const civicBurnLeftImg = new Image(); // Civic Burned down
+civicBurnLeftImg.src = 'assets/carBurn/civicBurn/civicBurnDown.png'
+
+// Hægri
+const taxiRightImg = new Image(); // Taxi abandoned up
+taxiRightImg.src = 'assets/carWreck/taxi/taxiUp.png'
+const sedanRightImg = new Image(); // Sedan abandoned up
+sedanRightImg.src = 'assets/carWreck/sedan/sedanUp.png'
+const policeRightImg = new Image(); // Police abandoned up
+policeRightImg.src = 'assets/carWreck/police/policeUp.png'
+const wagonRightImg = new Image(); // Wagon abandoned up
+wagonRightImg.src = 'assets/carWreck/wagon/wagonUp.png'
+const wagonBurnRightImg = new Image(); // Wagon Burned up
+wagonBurnRightImg.src = 'assets/carBurn/wagonBurn/wagonBurnUp.png'
+const civicBurnRightImg = new Image(); // Civic Burned up
+civicBurnRightImg.src = 'assets/carBurn/civicBurn/civicBurnUp.png'
 
 
 // --- Fylki fyrir myndir af hindrunum ---
-var roadObstacles = [taxiImg1, minivanImg1, taxiImg1, minivanImg1, taxiImg1, minivanImg1];
-var grassObstacles = [treeImg1, treeImg2, treeImg3, treeImg4, rockImg1, rockImg2];
+var grassObstacles = [treeImg1, treeImg2, treeImg3];
+var leftRoadObstacles = [taxiLeftImg, sedanLeftImg, policeLeftImg, wagonLeftImg, wagonBurnLeftImg, civicBurnLeftImg];
+var rightRoadObstacles = [taxiRightImg, sedanRightImg, policeRightImg, wagonRightImg, wagonBurnRightImg, civicBurnRightImg];
+// --- Sækir random mynd sem er a grasinu ---
+function getGrassImg() {
+    let number = Math.floor(Math.random() * 3); // tolur fra 0 magn i gras fylki
+    return grassObstacles[number]
+}
 
+// --- Sækir random mynd sem er á veginum ---
+// Vinstri
+function getLeftRoadImg() {
+    let number = Math.floor(Math.random() * 5); // tolur fra 0 magn i vinstri vegar fylki
+    return leftRoadObstacles[number]
+}
+// Hægri
+function getRightRoadImg() {
+    let number = Math.floor(Math.random() * 5); // tolur fra 0 magn i hægri vegar fylki
+    return rightRoadObstacles[number]
+}
 
 // --- Velur hvaða rás hindun kemur ---
 function pickRow() {
@@ -112,73 +164,79 @@ function pickRow() {
     }
 }
 
-
-
-// --- Sækir random mynd sem er a grasinu ---
-function getGrassImg() {
-    let number = Math.floor(Math.random() * 6);
-    return grassObstacles[number]
-}
-
-// --- Sækir randim mynd sem er á veginum ---
-function getRoadImg() {
-    let number = Math.floor(Math.random() * 6);
-    return roadObstacles[number]
-}
-
 // --- Föll fyrir teiknun hindrana á hverri rás ---
 function drawRow1A() {
     let img1 = getGrassImg()
-    tester1 = new obstacleTester(img1, 67.5, yObstacle, 20, 20)
+    tester1 = new obstacleTester(img1, 0, yObstacle, img1.width, img1.height)
     currentObstacle.push(tester1)
 }
 function drawRow1B() {
     let img2 = getGrassImg()
-    tester2 = new obstacleTester(img2, 202, 5, yObstacle, 20, 20)
+    tester2 = new obstacleTester(img2, 100, yObstacle, img2.width, img2.height)
     currentObstacle.push(tester2)
 }
 function drawRow2A() {
-    let img3 = getRoadImg()
-    tester3 = new obstacleTester(img3, 302.5, yObstacle, 20, 20)
+    let img3 = getLeftRoadImg()
+    tester3 = new obstacleTester(img3, 200, yObstacle, img3.width, img3.height)
     currentObstacle.push(tester3)
 }
 function drawRow2B() {
-    let img4 = getRoadImg()
-    tester4 = new obstacleTester(img4, 367.5, yObstacle, 20, 20)
+    let img4 = getLeftRoadImg()
+    tester4 = new obstacleTester(img4, 304, yObstacle, img4.width, img4.height)
     currentObstacle.push(tester4)
 }
 function drawRow3A() {
-    let img5 = getRoadImg()
-    tester5 = new obstacleTester(img5, 432.5, yObstacle, 20, 20)
+    let img5 = getRightRoadImg()
+    tester5 = new obstacleTester(img5, 440, yObstacle, img5.width, img5.height)
     currentObstacle.push(tester5)
 }
 function drawRow3B() {
-    let img6 = getGrassImg()
-    tester6 = new obstacleTester(img6, 497.5, yObstacle, 20, 20)
+    let img6 = getRightRoadImg()
+    tester6 = new obstacleTester(img6, 538, yObstacle, img6.width, img6.height)
     currentObstacle.push(tester6)
 }
 function drawRow4A() {
     let img7 = getGrassImg()
-    tester7 = new obstacleTester(img7, 597.5, yObstacle, 20, 20)
+    tester7 = new obstacleTester(img7, 640, yObstacle, img7.width, img7.height)
     currentObstacle.push(tester7)
 }
 function drawRow4B() {
     let img8 = getGrassImg()
-    tester8 = new obstacleTester(img8, 732.5, yObstacle, 20, 20)
+    tester8 = new obstacleTester(img8, 738, yObstacle, img8.width, img8.height)
     currentObstacle.push(tester8)
 }
 
-//Klasi sem við réttum ctx og yhnitið á veglínunni
-class vegaLinuKlassi {
-    constructor(ctx, yHnit) {
+// --- Veglinu klasi ---
+// Vinstri
+class roadLineLeft { //Klasi sem við réttum ctx og yhnitið á veglínunni
+    constructor(ctx, x, y, w, h) {
         this.ctx = ctx;
-        this.yHnit = yHnit;
+        this.x = x;
+        this.y = y;
+        this.w = w;
+        this.h = h;
     }
     //Notum ctx og hnitið til að teikna línuna
     drawVegLina() {
         this.ctx.fillStyle = "white";
-        this.ctx.fillRect(394, this.yHnit, 12, 35)
-        this.yHnit += dy / 2;
+        this.ctx.fillRect(this.x, this.y, this.w, this.h)
+        this.y += dy / 2;
+    }
+}
+// Hægri
+class roadLineRight { //Klasi sem við réttum ctx og yhnitið á veglínunni
+    constructor(ctx, x, y, w, h) {
+        this.ctx = ctx;
+        this.x = x;
+        this.y = y;
+        this.w = w;
+        this.h = h;
+    }
+    //Notum ctx og hnitið til að teikna línuna
+    drawVegLina() {
+        this.ctx.fillStyle = "white";
+        this.ctx.fillRect(this.x, this.y, this.w, this.h)
+        this.y += dy / 2;
     }
 }
 
@@ -188,8 +246,8 @@ class obstacleTester {
         this.img = img;
         this.x = x;
         this.y = y;
-        this.w = w;
-        this.h = h;
+        this.w = 70;
+        this.h = 117;
     }
     drawTester() {
         ctx.drawImage(this.img, this.x, this.y)
@@ -216,41 +274,57 @@ function draw() {
     // --- gras ---
     ctx.beginPath();
     ctx.fillStyle = "#40b84e";
-    ctx.fillRect(0, 0, 800, 800);
+    ctx.fillRect(0, 0, 840, 800);
     ctx.closePath();
-
     // --- vegur ---
     ctx.beginPath();
     ctx.fillStyle = "black";
-    ctx.fillRect(270, 0, 260, 800);
+    ctx.fillRect(200, 0, 440, 800);
+    ctx.closePath();
+    // --- Vegaskiptir ---
+    ctx.beginPath();
+    ctx.fillStyle = "#403217";
+    ctx.fillRect(400, 0, 40, 800);
     ctx.closePath();
 
-    // --- veg linur ---
-    for (let i = 0; i < vegaLinuGeymsla.length; i++) {
-        vegaLinuGeymsla[i].drawVegLina();
+
+    // --- Veg linur ---
+    // Vinstri
+    for (let i = 0; i < roadLineLeftStorage.length; i++) {
+        roadLineLeftStorage[i].drawVegLina();
         //Gáir hvort línan sé komin af canvasinum
-        if (vegaLinuGeymsla[i].yHnit > canvas.height) {
-            //Lét línuna byrja 2x ofar og þá hvarf skrítna bilið!!!
-            vegaLinuGeymsla[i].yHnit = -70;
+        if (roadLineLeftStorage[i].y > canvas.height) {
+            roadLineLeftStorage[i].y = -70;
+        }
+    }
+    // Hægri
+    for (let i = 0; i < roadLineRightStorage.length; i++) {
+        roadLineRightStorage[i].drawVegLina();
+        //Gáir hvort línan sé komin af canvasinum
+        if (roadLineRightStorage[i].y > canvas.height) {
+            roadLineRightStorage[i].y = -70;
         }
     }
 
+    // --- hindranir ---
+    // Ef hindrun komin af mappi byr til nyjar hindranir
     for (let j = 0; j < currentObstacle.length; j++) {
         currentObstacle[j].drawTester()
-        if (currentObstacle[j].y > canvas.height - 100) {
+        if (currentObstacle[j].y > canvas.height + 100) {
             currentObstacle = [];
             resetFlag()
             generateObstacles()
         }
     }
-
     for (let k = 0; k < currentObstacle.length; k++) {
         // athugum hvort óvinur rakst á hetju
         if (collision(player, currentObstacle[k])) {
+            playExplosion();
             stopGame();
+            playMetal(false);
         }
     }
-
+    ctx.drawImage(playerImg, player.x, player.y, player.width, player.height)
 
     /// !!! obstacles + interval !!!
 
@@ -265,17 +339,21 @@ function draw() {
 
 
     // --- teikna leikmann ---
-    ctx.drawImage(playerImg, player.x, player.y, player.width, player.height)
+
     //ctx.fillStyle = player.color
     //ctx.fillRect(player.x, player.y, player.width, player.height);
-
-
     pointDisplay();
-}
+} // -----draw end
+
 
 // --- veg linur ---
+// Vinstri
 for (let i = 0; i < 11; i++) { //Búum til 11 línur til að byrja og fyllum fylkið
-    vegaLinuGeymsla.push(new vegaLinuKlassi(ctx, i * 80)); //Notum síðan þessar línu í draw() þar sem þær ferðast niður
+    roadLineLeftStorage.push(new roadLineLeft(ctx, xLineLeft, i * 80, wLineLeft, hLineLeft)); //Notum síðan þessar línu í draw() þar sem þær ferðast niður
+}
+// Hægri
+for (let i = 0; i < 11; i++) { //Búum til 11 línur til að byrja og fyllum fylkið
+    roadLineRightStorage.push(new roadLineRight(ctx, xLineRight, i * 80, wLineRight, hLineRight)); //Notum síðan þessar línu í draw() þar sem þær ferðast niður
 }
 
 // --- keyboard controls ---
@@ -299,7 +377,7 @@ function keyDownHandler(e) {
         }
     }
     if (e.keyCode == 37) {
-        player.x -= dx + 20;
+        player.x -= dx + 20;//left
         if (player.x < 0) {
             player.x = 0;
             // playerImg.src = './assets/player/playerTurnL';
@@ -311,17 +389,24 @@ function keyDownHandler(e) {
 document.getElementById("stop").addEventListener("click", stopGame)
 function startGame() {
     closeMenu();
+    //drawPlayer();
     running = true;
+    controller = true;
+    playMetal();
     animate();
 }
 function playAgain() {
     currentObstacle = []
-    dy = 5;
+    dy = 8;
     resetFlag()
+    player.x = 400;
     generateObstacles();
     gamePoints = 0;
     closeGameOver();
+    //drawPlayer();
     running = true;
+    controller = true;
+    playMetal();
     animate();
 }
 function stopGame() {
@@ -329,33 +414,51 @@ function stopGame() {
     openGameOver();
 }
 
-
-// Hindranir
+// --- Hindranir generate ---
 function generateObstacles() {
-    for (let i = 0; i < 10; i++) {
-        dy += 0.05;
+    for (let i = 0; i < 5; i++) {
+        dy += 0.03; // leikhradi eftir notandi fær stig
         gamePoints += 1;
         pickRow()
     }
 }
-for (let i = 0; i < 10; i++) {
+// Velur ras a hindrunum
+for (let i = 0; i < 5; i++) {
     pickRow()
 }
+
+var metal = new Audio('assets/audio/bilageddon.mp3');
+var controller = true;
+function playMetal() {
+    if (controller) {
+        metal.play();
+        controller = false;
+    }
+    else {
+        metal.pause()
+    }
+}
+
+
+
+
+function playExplosion() {
+    let explosion = new Audio('assets/audio/explosion.mp3');
+    explosion.play();
+}
+
 
 
 //menu popup
 function openMenu() {
     document.getElementById("menu-form").style.display = "block";
 }
-
 function closeMenu() {
     document.getElementById("menu-form").style.display = "none";
 }
-
 function openGameOver() {
     document.getElementById("gameOver-form").style.display = "block";
 }
-
 function closeGameOver() {
     document.getElementById("gameOver-form").style.display = "none";
 }
